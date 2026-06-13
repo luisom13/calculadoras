@@ -1,20 +1,21 @@
 # CalculaSV 💵
 
-**Herramientas financieras para El Salvador — 100% offline, sin dependencias externas.**
+**Herramientas financieras para El Salvador — PWA instalable, funciona offline.**
 
-Aplicación web de una sola página (`index.html`) con dos calculadoras integradas: salario neto y cuota hipotecaria. Funciona directamente desde el navegador, sin servidor, sin internet, sin instalación.
+Aplicación web de una sola página con tres calculadoras integradas: salario neto, hipotecaria con simulación de pagos extra, y ahorro e inversión con interés compuesto. Se instala como app nativa en móvil y escritorio gracias al Service Worker.
 
 ---
 
 ## 🚀 Demo en vivo
 
-> `https://luisom13.github.io/calculadoras/`
+**[https://luisom13.github.io/calculadoras/](https://luisom13.github.io/calculadoras/)**
 
 ---
 
 ## 🛠️ Herramientas incluidas
 
 ### 💼 Calculadora de Salario Neto
+
 Calcula el salario neto a recibir basándose en las regulaciones laborales vigentes de El Salvador.
 
 **Descuentos que calcula:**
@@ -25,7 +26,7 @@ Calcula el salario neto a recibir basándose en las regulaciones laborales vigen
 **Beneficios anuales que estima:**
 - **Aguinaldo** — según tabla legal (10/15/18 días por años de servicio) o días personalizados por empresa
 - **Vacaciones + bono vacacional** — `salario ÷ 30 × días`, más el porcentaje de bono sobre ese monto
-- **Quincena 25** — 50% del salario mensual, libre de ISR, ISSS y AFP; proporcional si el empleado tiene menos de 1 año. Aplica a salarios ≤ $1,500/mes (pago entre el 15 y 25 de enero)
+- **Quincena 25** — 50% del salario mensual, libre de ISR, ISSS y AFP; proporcional si el empleado tiene menos de 1 año. Aplica a salarios ≤ $1,500/mes
 
 **Configurable por empresa:**
 | Parámetro | Valor legal por defecto | Modificable |
@@ -41,18 +42,25 @@ Calcula el salario neto a recibir basándose en las regulaciones laborales vigen
 **Referencia legal:**
 - Salario mínimo vigente: **$408.80/mes**
 - Tabla ISR: DGII El Salvador 2024
-- Quincena 25: Decreto Legislativo vigente desde 2026 (obligatorio sector público; privado obligatorio desde 2027)
+- Quincena 25: Decreto Legislativo (sector público obligatorio; privado obligatorio desde 2027)
 
 ---
 
 ### 🏠 Calculadora Hipotecaria
-Calcula la cuota mensual real de un préstamo hipotecario incluyendo los seguros obligatorios en El Salvador.
+
+Calcula la cuota mensual real de un préstamo hipotecario incluyendo los seguros obligatorios en El Salvador. Ahora incluye **simulación de pagos extra** para visualizar el ahorro en tiempo e intereses.
 
 **Qué calcula:**
 - Cuota mensual (capital + intereses, método francés)
 - Seguro de deuda / vida: **0.038%/mes** sobre el saldo del préstamo
 - Seguro de daños (incendio/terremoto): **0.025%/mes** sobre el 70% del precio
 - Total a pagar, total de intereses y prima inicial
+
+**Simulación de pagos extra:**
+- Abono mensual adicional al capital (recurrente)
+- Abono anual extraordinario (ej. aguinaldo o bono)
+- Muestra años/meses ahorrados y el monto total de intereses evitados
+- Gráfico de línea comparando la curva de saldo original vs la curva acelerada año a año
 
 **Bancos preconfigurados:**
 | Banco | Tasa anual |
@@ -64,18 +72,39 @@ Calcula la cuota mensual real de un préstamo hipotecario incluyendo los seguros
 
 También acepta tasa personalizada.
 
-**Visualización:** gráfico donut animado con la distribución capital / intereses / seguros.
+---
+
+### 📈 Calculadora de Ahorro e Inversión
+
+Proyecta el crecimiento de un ahorro con interés compuesto a lo largo del tiempo.
+
+**Qué calcula:**
+- Saldo final proyectado con interés compuesto
+- Desglose de capital aportado vs intereses generados
+- Frecuencias de aporte: mensual, quincenal o semanal
+- Aporte anual extraordinario (ej. aguinaldo)
+- Gráfico de barras apiladas mostrando capital vs intereses por año
+
+**Tasas de referencia del mercado salvadoreño:**
+| Instrumento | Referencia |
+|---|---|
+| Cuentas de ahorro | ~1–3% |
+| Depósito a plazo (DAP) | ~4–6% |
+| CETES / Letras del Tesoro | ~5–7% |
+| Fondos de pensión (AFP) | ~5–8% |
+
+> ⚠️ **Aviso:** Esta calculadora es solo una herramienta orientativa. Los rendimientos pasados no garantizan rendimientos futuros. Consulta con un asesor financiero certificado antes de tomar decisiones de inversión.
 
 ---
 
 ## ✨ Características generales
 
-- **100% offline** — no requiere internet después de la primera carga. Sin Google Fonts, sin CDN, sin APIs externas
+- **PWA instalable** — instálable en móvil y escritorio directamente desde el navegador
+- **Offline completo** — Service Worker con estrategia Cache-First; funciona en modo avión tras la primera carga
+- **Gráficos dinámicos** — visualizaciones interactivas con Chart.js (cacheado offline por el SW)
 - **Modo oscuro / claro** — toggle en el header, preferencia guardada en `localStorage`
 - **Responsive** — adaptado para móvil, tablet y escritorio
-- **Compatible con iPhone home screen** — se puede agregar a la pantalla de inicio como app
-- **Sin frameworks** — HTML, CSS y JavaScript puro. Sin React, sin Vue, sin dependencias
-- **Un solo archivo** — todo el código en `index.html`
+- **Un solo archivo HTML** — toda la lógica en `index.html`, sin frameworks ni build tools
 
 ---
 
@@ -83,9 +112,23 @@ También acepta tasa personalizada.
 
 ```
 /
-├── index.html      # Aplicación completa (ambas calculadoras)
-└── README.md       # Este archivo
+├── index.html              # Aplicación completa (tres calculadoras)
+├── manifest.json           # Manifiesto PWA (nombre, iconos, colores)
+├── sw.js                   # Service Worker (caché offline Cache-First)
+├── icons/
+│   ├── icon-192x192.png    # Ícono PWA para pantalla de inicio
+│   └── icon-512x512.png    # Ícono PWA splash screen
+└── README.md               # Este archivo
 ```
+
+---
+
+## ⚙️ Cómo funciona el modo offline
+
+1. Al visitar la app por primera vez con internet, el Service Worker (`sw.js`) se registra e instala.
+2. Descarga y guarda en caché `index.html`, `manifest.json` y la librería Chart.js.
+3. En visitas posteriores (incluso sin internet), el SW sirve todos los recursos desde el caché instantáneamente.
+4. Al actualizar el archivo `sw.js` con una nueva versión (`CACHE_VERSION`), el navegador detecta el cambio, instala el nuevo SW y limpia cachés viejos automáticamente.
 
 ---
 
